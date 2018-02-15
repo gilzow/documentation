@@ -51,7 +51,7 @@ terminus drush $TERMINUS_SITE.dev -- en pantheon_advanced_page_cache -y`
 
 8. Now we will turn on full page caching and then clear caches. We could do that from our Drupal site at /admin/config/development/performance.
 
-![Drual 8 admin screen for Performance][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/config-development-performance.png
+![Drual 8 admin screen for Performance][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img1-config-dev-performance.png
 ]
 
   
@@ -72,7 +72,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 
    1. Make a new article node complete with at least one taxonomy term in the tag field.
 
-  ![node/add/article.][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/node-add-article.png]
+  ![node/add/article][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img2-node-add-article.png]
 
 
    2. In an another browser (or a perhaps a Chrome incognito window), open the node's page and open the developer tools. In Chrome's developer tools you can click on "Network" to see the HTTP requests that this page made. You will need to refresh the page to see a complete list of network requests.
@@ -85,6 +85,9 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 The first request in the list is the initial HTML response. All of the subsequent requests for assets like CSS and images happen after this first HTML response kicks things off.
 
 By clicking on the first request we can see more detailed information like the HTTP headers.  
+
+  ![ode/add/article][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img4-node-1-dev-console.png]
+
 
 
    3. That information is also visible on the command line with curl -I.
@@ -126,7 +129,7 @@ content-length: 10497
 
 For the rest of the guide, as we make content changes and inspect the changing HTTP headers, we will just reference curl -I output because  in Chrome Developer tools there is a lot of additional information that would distract from our purpose. But if you are more comfortable in the browser, you can continue using that incognito window.
 
-For a walk through of how some of these different headers change caching behavior, see https://pantheon.io/docs/guides/frontend-performance/[a][b]
+For a walk through of how some of these different headers change caching behavior, see https://pantheon.io/docs/guides/frontend-performance/
 
 The two headers we care about most are "Surrogate-Key-Raw" and "Age". The “Surrogate-Key-Raw” header tell us all of the Drupal elements that comprise the page. Most critically, we see "node:1" and "taxonomy_term:1". This tells us that this page contained renderings of those two entities. The "Age" header tells us the number of seconds that the page has been cached. If you curl again you should see the age number go up. 
 
@@ -141,7 +144,7 @@ From this point on, we will show many more curl commands and their output; but t
 
    4. Now let's look at some of the headers on the listing page for the taxonomy term we made (/taxonomy/term/1):
   
-
+   ![Drupal 8 taxonomy screen][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img5-taxonomy-term-1.png]
 
 curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/taxonomy/term/1
 Surrogate-Key-Raw: block_view config:block.block.bartik_account_menu config:block.block.bartik_branding config:block.block.bartik_breadcrumbs config:block.block.bartik_content config:block.block.bartik_footer config:block.block.bartik_help config:block.block.bartik_local_actions config:block.block.bartik_local_tasks config:block.block.bartik_main_menu config:block.block.bartik_messages config:block.block.bartik_page_title config:block.block.bartik_powered config:block.block.bartik_search config:block.block.bartik_tools config:block_emit_list config:color.theme.bartik config:search.settings config:system.menu.account config:system.menu.footer config:system.menu.main config:system.menu.tools config:system.site config:user.role.anonymous config:views.view.taxonomy_term http_response node:1 node_emit_list node_view rendered taxonomy_term:1 taxonomy_term_view user:1 user_view
@@ -158,7 +161,7 @@ age: 15
    6. Let's now make a page node (/node/add/page).
 
   
-
+   ![Drupal 8 node add page][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img6-node-add-page-2.png]
 
 
 
@@ -177,7 +180,7 @@ age: 18
 
    9. Now what if our article node, Node 1, were saved again? What caching behavior do we want across these three pages: /node/1, /node/2, and /taxonomy/term/1? Load up the edit screen but don't save yet (node/1/edit).
 
-  
+  ![][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img7-node-edit-admin.png]  
 
    10. Check the age on our three pages.
 `
@@ -215,7 +218,7 @@ What if we added a new node that used taxonomy term 1? We would want the listing
 
       1. Try adding a new article and use the same taxonomy term.
 
-  
+    ![][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img8-node-add-article.png]
 
 
       2. And curl the taxonomy listing page.
@@ -234,7 +237,7 @@ In this section we are going to add a custom module that uses a hook to clear th
 
          2. Open code/modules and create a new directory called custom_cache_tags.. Open that folder.
 
-
+        ![][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img9-sftp-client.png]
   
 
          3. Create a new file named custom_cache_tags.info.yml and add the following:
@@ -327,7 +330,7 @@ Age: 5
 `
                3. Once we add another article that references term 1, that age should reset to zero. Make the new article node and use the same taxonomy term.
 
-  
+              ![][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img10-node-add-article2.png]
 
 
                4. And curl again.
@@ -363,13 +366,13 @@ terminus env:commit $TERMINUS_SITE.dev --message="adding views_custom_cache_tag"
                   3. Now we will edit the definition of the View that controls /taxonomy/term/1. We will change the cache settings from "Tag based" to “Custom Tag based"
 
 
-  
+                ![][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img11-view-taxonomy-term.png]
 
 
 
                   4. For the custom tag use taxonomy-listing:{{ raw_arguments.tid }}. Save the View.
   
-
+                  ![][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img12-page-caching-option.png]
 
                   5. Now, to see the change, we may need to clear all caches.
 `
@@ -397,12 +400,10 @@ $cache_tag = 'taxonomy-listing:' . $tid;
 
                      3. Again check that adding a new article clears your taxonomy listing page.
 
-
+                    ![][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img13-node-add-article-3.png]
   
 `
 curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/taxonomy/term/1
 Age: 0
 `
 
-[a]Should this explanation be broken out here too?
-[b]We could do a learn-more collapsible section here if we want to go into more depth. For expediency, let's just stick to a link.
