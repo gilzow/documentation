@@ -329,7 +329,6 @@ function custom_cache_tags_invalidate_all_terms_referenced_by_node(NodeInterface
   }
 }
 
-E
 ```
 
 
