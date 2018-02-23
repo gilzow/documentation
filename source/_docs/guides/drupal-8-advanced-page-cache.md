@@ -16,32 +16,49 @@ To follow along with this guide it is best to start use the dev environment of a
 
 1. To allow for easy copy/pasting, we will set a command line variable for the machine name of the new Drupal 8 site that we are about to make. This name needs to be unique among all Pantheon sites so you will need to pick something other than "cache-tags-demo".
 
-  `export TERMINUS_SITE=cache-tags-demo`
+  ```
+  export TERMINUS_SITE=cache-tags-demo
+  ```
 
 2. Start by making a new Drupal 8 site. This command will create the Pantheon infrastructure for your new site but not install Drupal to the database. That step will come next.
 
-  `terminus site:create $TERMINUS_SITE $TERMINUS_SITE "Drupal 8"`
+  ```
+  terminus site:create $TERMINUS_SITE $TERMINUS_SITE "Drupal 8"
+  ```
 
 3. Now we will install Drupal.
 
-  `terminus drush $TERMINUS_SITE.dev -- site-install -y`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- site-install -y
+  ```
+
 
 4. Performing that step results in a a change to `settings.php.` You could commit this change in the Pantheon Dashboard, but we’ll do that from the command line.
 
-  `terminus env:commit $TERMINUS_SITE.dev --message="Installing Drupal" --force`
+  ```
+  terminus env:commit $TERMINUS_SITE.dev --message="Installing Drupal" --force
+  ```
 
 5. Now we will add and enable the Pantheon Advanced Page Cache Module which is responsible for sending cache metadata to the Pantheon Global CDN.
-  `terminus drush $TERMINUS_SITE.dev -- dl pantheon_advanced_page_cache`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- dl pantheon_advanced_page_cache
+  ```
 
-  `terminus drush $TERMINUS_SITE.dev -- en pantheon_advanced_page_cache -y`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- en pantheon_advanced_page_cache -y
+  ```
 
 6. Let's now commit the code that was just added.
 
-  `terminus env:commit $TERMINUS_SITE.dev --message="Adding Pantheon Advanced Page Cache." --force`
+  ```
+  terminus env:commit $TERMINUS_SITE.dev --message="Adding Pantheon Advanced Page Cache." --force
+  ```
 
 7. Log in to your newly created site. This command will give you a one-time log-in link for the admin user.
 
-  `terminus drush $TERMINUS_SITE.dev -- user-login`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- user-login
+  ```
 
 8. Now we will turn on full page caching and then clear caches. We could do that from our Drupal site at `/admin/config/development/performance.`
 
@@ -50,9 +67,13 @@ To follow along with this guide it is best to start use the dev environment of a
 
   We could also make those same changes using Drush.
 
-  `terminus drush $TERMINUS_SITE.dev -- cset system.performance cache.page.max_age 600 -y`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- cset system.performance cache.page.max_age 600 -y
+  ```
 
-  `terminus drush $TERMINUS_SITE.dev -- cr`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- cr
+  ```
 
 ## Understanding Pantheon Advanced Page Cache and the HTTP Headers that control caching
 
@@ -208,7 +229,7 @@ What if we added a new node that used taxonomy term 1? We would want the listing
 
 1. Try adding a new article and use the same taxonomy term.
 
-    ![Node add form](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img8-node-add-article.png)
+  ![Node add form](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img8-node-add-article.png)
 
 2. And curl the taxonomy listing page.
 
@@ -228,7 +249,7 @@ In this section we are going to add a custom module that uses a hook to clear th
 
 2. Open `code/modules` and create a new directory called `custom_cache_tags`. Open that folder.
 
-        ![SFTP Client](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img9-sftp-client.png)
+  ![SFTP Client](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img9-sftp-client.png)
 
 3. Create a new file named `custom_cache_tags.info.yml` and add the following:
 
@@ -301,11 +322,17 @@ In this section we are going to add a custom module that uses a hook to clear th
 
 5. Enable our new custom module and commit your code. Lastly, clear all caches so that the new hook you added is detected by Drupal
 
-  `terminus drush $TERMINUS_SITE.dev -- en custom_cache_tags -y`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- en custom_cache_tags -y
+  ```
 
-  `terminus env:commit $TERMINUS_SITE.dev --message="Add custom_cache_tags" --force`
+  ```
+  terminus env:commit $TERMINUS_SITE.dev --message="Add custom_cache_tags" --force
+  ```
 
-  `terminus drush $TERMINUS_SITE.dev -- cr`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- cr
+  ```
 
 6. Now whenever we add content, the referenced taxonomy term pages are automatically cleared. To test, let's check on the age of our taxonomy listing again by curling a few times
 
@@ -321,7 +348,7 @@ In this section we are going to add a custom module that uses a hook to clear th
 
 7. Once we add another article that references term 1, that age should reset to zero. Make the new article node and use the same taxonomy term.
 
-      ![Node add form](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img10-node-add-article2.png)
+  ![Node add form](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img10-node-add-article2.png)
 
 8. And curl again.
 
@@ -338,13 +365,19 @@ The code we added clears all references to each taxonomy term every time a node 
 
 1. Let’s start by downloading and enabling the [Views Custom Cache Tags](https://www.drupal.org/project/views_custom_cache_tag) module.
 
-  `terminus drush $TERMINUS_SITE.dev -- dl views_custom_cache_tag`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- dl views_custom_cache_tag
+  ```
 
-  `terminus drush $TERMINUS_SITE.dev -- en views_custom_cache_tag -y`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- en views_custom_cache_tag -y
+  ```
 
 2. Commit your code changes.
 
-  `terminus env:commit $TERMINUS_SITE.dev --message="adding views_custom_cache_tag"  --force`
+  ```
+  terminus env:commit $TERMINUS_SITE.dev --message="adding views_custom_cache_tag"  --force
+  ```
 
 3. Edit the View that controls taxonomy terms (admin/structure/views/view/taxonomy_term) and change the cache settings from "Tag based" to “Custom Tag based". You may have to expand the Advanced column.
 
@@ -356,7 +389,9 @@ The code we added clears all references to each taxonomy term every time a node 
 
 5. Now, to see the change, we may need to clear all caches.
 
-  `terminus drush $TERMINUS_SITE.dev -- cr`
+  ```
+  terminus drush $TERMINUS_SITE.dev -- cr
+  ```
 
 6. And curl the listing page a few times again.
 
@@ -367,11 +402,15 @@ The code we added clears all references to each taxonomy term every time a node 
   ```
 7. Finally, let's alter our custom written code so that our new tag, "taxonomy-listing:1" gets cleared when a new node is added that references term 1. Change the code in custom_cache_tags.module from
 
-  `$cache_tag = 'taxonomy_term:' . $tid;`
+  ```
+  $cache_tag = 'taxonomy_term:' . $tid;
+  ```
 
   to
 
-  `$cache_tag = 'taxonomy-listing:' . $tid;`
+  ```
+  $cache_tag = 'taxonomy-listing:' . $tid;
+  ```
 
 8. Again check that adding a new article clears your taxonomy listing page.
 
