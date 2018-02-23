@@ -1,6 +1,6 @@
 ---
-title: Setting up a new Drupal 8 site with Pantheon Advanced Page Cache module
-description: Learn how to set up a new Drupal 8 site with Pantheon Advanced Page Cache module
+title: Setting and Clearing Custom Cache Tags in Drupal 8 site with Pantheon Advanced Page Cache module
+description: Learn how to use Views Cache Tags module along with custom code to control Pantheon Advanced Page Cache.
 tags: []
 categories: []
 type: guide
@@ -33,7 +33,7 @@ To follow along with this guide it is best to start use the dev environment of a
   ```
 
 
-4. Performing that step results in a a change to `settings.php.` You could commit this change in the Pantheon Dashboard, but we’ll do that from the command line.
+4. Performing that step results in a a change to `settings.php`. You could commit this change in the Pantheon Dashboard, but we’ll do that from the command line.
 
   ```
   terminus env:commit $TERMINUS_SITE.dev --message="Installing Drupal" --force
@@ -130,7 +130,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 
   For the rest of the guide, as we make content changes and inspect the changing HTTP headers, we will just reference `curl -I` output because  in Chrome Developer tools has a lot of additional information that would distract from our purpose. But if you are more comfortable in the browser, you can continue using that incognito window.
 
-  For a walk through of how some of these different headers change caching behavior, see [our Frontend Performance Guide]https://pantheon.io/docs/guides/frontend-performance/
+  For a walk through of how some of these different headers change caching behavior, see [our Frontend Performance Guide](https://pantheon.io/docs/guides/frontend-performance/)
 
   The two headers we care about most are `Surrogate-Key-Raw` and `Age`.
 
@@ -320,7 +320,7 @@ In this section we are going to add a custom module that uses a hook to clear th
 
   This code clears all references to every taxonomy term referenced by a new published node.
 
-5. Enable our new custom module and commit your code. Lastly, clear all caches so that the new hook you added is detected by Drupal
+5. Enable our new custom module and commit your code. Lastly, clear all caches so that the new hook you added is detected by Drupal.
 
   ```
   terminus drush $TERMINUS_SITE.dev -- en custom_cache_tags -y
@@ -334,7 +334,7 @@ In this section we are going to add a custom module that uses a hook to clear th
   terminus drush $TERMINUS_SITE.dev -- cr
   ```
 
-6. Now whenever we add content, the referenced taxonomy term pages are automatically cleared. To test, let's check on the age of our taxonomy listing again by curling a few times
+6. Now whenever we add content, the referenced taxonomy term pages are automatically cleared. To test, let's check on the age of our taxonomy listing again by curling a few times.
 
   ```
   curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/taxonomy/term/1
@@ -420,7 +420,7 @@ The code we added clears all references to each taxonomy term every time a node 
   Age: 0
   ```
 
-  ## Additional Resources.
+## Additional Resources.
 
 Where you set and clear tags will vary greatly based on the needs of your site.
 See the [Drupal.org documentation for how you can set cache metadata directly on render arrays](https://www.drupal.org/docs/8/api/render-api/cacheability-of-render-arrays). You can also read this blog post from Aaron Wolfe of Capellic on [Pantheon Advanced Page Cache in Drupal 7](https://capellic.com/2017/11/28/using-pantheon-advanced-page-cache-in-drupal-7/).
