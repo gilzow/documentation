@@ -400,7 +400,7 @@ The code we added clears all references to each taxonomy term every time a node 
   Surrogate-Key-Raw: block_view config:block.block.bartik_account_menu config:block.block.bartik_branding config:block.block.bartik_breadcrumbs config:block.block.bartik_content config:block.block.bartik_footer config:block.block.bartik_help config:block.block.bartik_local_actions config:block.block.bartik_local_tasks config:block.block.bartik_main_menu config:block.block.bartik_messages config:block.block.bartik_page_title config:block.block.bartik_powered config:block.block.bartik_search config:block.block.bartik_tools config:block_emit_list config:color.theme.bartik config:search.settings config:system.menu.account config:system.menu.footer config:system.menu.main config:system.menu.tools config:system.site config:user.role.anonymous config:views.view.taxonomy_term http_response node:1 node:3 node:4 node:5 node:6 node_view rendered taxonomy-listing:1 taxonomy_term:1 taxonomy_term_view user:1 user_view
   Age: 8
   ```
-7. Finally, let's alter our custom written code so that our new tag, "taxonomy-listing:1" gets cleared when a new node is added that references term 1. Change the code in custom_cache_tags.module from
+7. Finally, let's alter our custom written code so that our new tag, `taxonomy-listing:1` gets cleared when a new node is added that references term 1. Change the code in `custom_cache_tags.module` from
 
   ```
   $cache_tag = 'taxonomy_term:' . $tid;
