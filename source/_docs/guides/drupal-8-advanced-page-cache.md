@@ -136,7 +136,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 
   The `Surrogate-Key-Raw` header tell us all of the Drupal elements that comprise the page. Most critically, we see `node:1` and `taxonomy_term:1`. This tells us that this page contained renderings of those two entities.
 
-  The "Age" header tells us the number of seconds that the page has been cached. If you curl again you should see the age number go up.
+  The `Age` header tells us the number of seconds that the page has been cached. If you curl again you should see the age number go up.
 
   ```
   curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/node/1
@@ -145,7 +145,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
   ```
   From this point on, we will show many more curl commands and their output; but the output will be trimmed to show only the relevant portions.
 
-4. Now let's look at some of the headers on the listing page for the taxonomy term we made (/taxonomy/term/1):
+4. Now let's look at some of the headers on the listing page for the taxonomy term we made (`/taxonomy/term/1`):
 
    ![Drupal 8 taxonomy screen](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img5-taxonomy-term-1.png)
 
@@ -155,7 +155,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
    Age: 0
    ```
 
-  Again we see "node:1" and "taxonomy_term:1" and because this is the first time we have requested the listing page from curl, we see an age of 0, meaning the response wasn't cached.
+  Again we see `node:1` and `taxonomy_term:1` and because this is the first time we have requested the listing page from curl, we see an age of 0, meaning the response wasn't cached.
 
 5. Curl again and the age will go up.
 
@@ -164,9 +164,9 @@ Now we are getting to the part where we will actually look at HTTP Headers.
   age: 15
   ```
 
-6. Let's now make a page node (/node/add/page).
+6. Let's now make a page node (`/node/add/page`).
 
-   ![Drupal 8 node add page][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img6-node-add-page-2.png]
+   ![Drupal 8 node add page](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img6-node-add-page-2.png)
 
 7. And look at its headers.
 
@@ -183,7 +183,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
   age: 18
   ```
 
-9. Now what if our article node, Node 1, were saved again? What caching behavior do we want across these three pages: /node/1, /node/2, and /taxonomy/term/1? Load up the edit screen but don't save yet (node/1/edit).
+9. Now what if our article node, Node 1, were saved again? What caching behavior do we want across these three pages: `/node/1`, `/node/2`, and `/taxonomy/term/1`? Load up the edit screen but don't save yet (`node/1/edit`).
 
   ![Node edit form](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img7-node-edit-admin.png)
 
@@ -379,11 +379,11 @@ The code we added clears all references to each taxonomy term every time a node 
   terminus env:commit $TERMINUS_SITE.dev --message="adding views_custom_cache_tag"  --force
   ```
 
-3. Edit the View that controls taxonomy terms (admin/structure/views/view/taxonomy_term) and change the cache settings from "Tag based" to “Custom Tag based". You may have to expand the Advanced column.
+3. Edit the View that controls taxonomy terms (`admin/structure/views/view/taxonomy_term`) and change the cache settings from "Tag based" to “Custom Tag based". You may have to expand the Advanced column.
 
   ![Views edit screen](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img11-view-taxonomy-term.png)
 
-4. For the custom tag, use taxonomy-listing:{{ raw_arguments.tid }}. Save the View.
+4. For the custom tag, use `taxonomy-listing:{{ raw_arguments.tid }}`. Save the View.
 
  ![Views caching config form](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img12-page-caching-option.png)
 
