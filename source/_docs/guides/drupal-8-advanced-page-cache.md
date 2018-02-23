@@ -4,7 +4,7 @@ description: Learn how to set up a new Drupal 8 site with Pantheon Advanced Page
 tags: []
 categories: []
 type: guide
-image: 
+image:
 permalink: docs/guides/:basename/
 contributors:
   - stevector
@@ -17,9 +17,9 @@ To follow along with this guide it is best to start use the dev environment of a
 
   1. To allow for easy copy/pasting, we will set a command line variable for the machine name of the new Drupal 8 site that we are about to make. This name needs to be unique among all Pantheon sites so you will need to pick something other than "cache-tags-demo".
 
-```
-export TERMINUS_SITE=cache-tags-demo
-```
+  ```
+  export TERMINUS_SITE=cache-tags-demo
+  ```
 
 
   2. Start by making a new Drupal 8 site. This command will create the Pantheon infrastructure for your new site but not install Drupal to the database. That step will come next.
@@ -68,7 +68,7 @@ terminus drush $TERMINUS_SITE.dev -- user-login
   ![Drual 8 admin screen for Performance](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img1-config-dev-performance.png
 )
 
-  
+
   We could also make those same changes using Drush.
 
 ```
@@ -93,7 +93,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 
   2.  In an another browser, or a perhaps a [Chrome incognito window](https://support.google.com/chrome/answer/95464), open the node's page and open the developer tools. In Chrome's developer tools you can click on "Network" to see the HTTP requests that this page made. You will need to refresh the page to see a complete list of network requests.
 
-  
+
   The first request in the list is the initial HTML response. All of the subsequent requests for assets like CSS and images happen after this first HTML response kicks things off.
 
   By clicking on the first request we can see more detailed information like the HTTP headers.  
@@ -142,7 +142,7 @@ For the rest of the guide, as we make content changes and inspect the changing H
 
 For a walk through of how some of these different headers change caching behavior, see [https://pantheon.io/docs/guides/frontend-performance/](https://pantheon.io/docs/guides/frontend-performance/)
 
-The two headers we care about most are "Surrogate-Key-Raw" and "Age". The “Surrogate-Key-Raw” header tell us all of the Drupal elements that comprise the page. Most critically, we see "node:1" and "taxonomy_term:1". This tells us that this page contained renderings of those two entities. The "Age" header tells us the number of seconds that the page has been cached. If you curl again you should see the age number go up. 
+The two headers we care about most are "Surrogate-Key-Raw" and "Age". The “Surrogate-Key-Raw” header tell us all of the Drupal elements that comprise the page. Most critically, we see "node:1" and "taxonomy_term:1". This tells us that this page contained renderings of those two entities. The "Age" header tells us the number of seconds that the page has been cached. If you curl again you should see the age number go up.
 
 ```
 curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/node/1
@@ -155,7 +155,7 @@ From this point on, we will show many more curl commands and their output; but t
 
 
   4. Now let's look at some of the headers on the listing page for the taxonomy term we made (/taxonomy/term/1):
-  
+
    ![Drupal 8 taxonomy screen](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img5-taxonomy-term-1.png)
 
 ```
@@ -175,7 +175,7 @@ age: 15
 
   6. Let's now make a page node (/node/add/page).
 
-  
+
    ![Drupal 8 node add page][/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img6-node-add-page-2.png]
 
 
@@ -253,15 +253,15 @@ Our taxonomy listing was not cleared. In order to clear the taxonomy term when a
 In this section we are going to add a custom module that uses a hook to clear the cache tag for all taxonomy terms.
 
 
-  1. To start, let's connect to our Dev environment [via SFTP](https://pantheon.io/docs/sftp/). 
+  1. To start, let's connect to our Dev environment [via SFTP](https://pantheon.io/docs/sftp/).
 
   2. Open 'code/modules' and create a new directory called `custom_cache_tags`. Open that folder.
 
   ![](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img9-sftp-client.png)
-  
+
 
   3. Create a new file named `custom_cache_tags.info.yml` and add the following:
-  
+
 ```
 name: Custom Cache Tags
 type: module
@@ -293,7 +293,7 @@ function custom_cache_tags_node_insert(NodeInterface $node) {
 /**
  * Invalidate the cache for all taxonomy terms referenced by a node.
  *
- * 
+ *
  */
 function custom_cache_tags_invalidate_all_terms_referenced_by_node(NodeInterface $node) {
 
@@ -351,7 +351,7 @@ Age: 0
 curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/taxonomy/term/1
 Age: 5
 ```
-               
+
   7. Once we add another article that references term 1, that age should reset to zero. Make the new article node and use the same taxonomy term.
 
   ![](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img10-node-add-article2.png)
@@ -397,7 +397,7 @@ terminus env:commit $TERMINUS_SITE.dev --message="adding views_custom_cache_tag"
 
 
   4. For the custom tag use `taxonomy-listing:{{ raw_arguments.tid }}`. Save the View.
-  
+
   ![](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img12-page-caching-option.png)
 
   5. Now, to see the change, we may need to clear all caches.
@@ -416,7 +416,7 @@ Surrogate-Key-Raw: block_view config:block.block.bartik_account_menu config:bloc
 Age: 8
 ```
 
-  7. Finally, let's alter our custom written code so that our new tag, "taxonomy-listing:1" gets cleared when a new node is added that references term 1. Change the code in `custom_cache_tags.module` from 
+  7. Finally, let's alter our custom written code so that our new tag, "taxonomy-listing:1" gets cleared when a new node is added that references term 1. Change the code in `custom_cache_tags.module` from
 
 ```
 $cache_tag = 'taxonomy_term:' . $tid;
@@ -437,4 +437,3 @@ $cache_tag = 'taxonomy-listing:' . $tid;
 curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/taxonomy/term/1
 Age: 0
 ```
-
