@@ -60,7 +60,7 @@ To follow along with this guide it is best to start use the dev environment of a
   terminus drush $TERMINUS_SITE.dev -- user-login
   ```
 
-8. Now we will turn on full page caching and then clear caches. We could do that from our Drupal site at `/admin/config/development/performance.`
+8. Now we will turn on full page caching and then clear caches. We could do that from our Drupal site at `/admin/config/development/performance`.
 
   ![Drual 8 admin screen for Performance](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img1-config-dev-performance.png
 )
@@ -83,7 +83,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 
   ![node/add/article](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img2-node-add-article.png)
 
-2. In an another browser (or a perhaps a [Chrome incognito window](https://support.google.com/chrome/answer/95464), open the article you just created.  In Chrome, you can right click on the page and click “Inspect” to open the developer tools. From there, click on the "Network" tab to see the HTTP requests that this page made. You will need to refresh the page to see a complete list of network requests.
+2. In an another browser (or a perhaps a [Chrome incognito window](https://support.google.com/chrome/answer/95464)), open the article you just created.  In Chrome, you can right click on the page and click “Inspect” to open the developer tools. From there, click on the "Network" tab to see the HTTP requests that this page made. You will need to refresh the page to see a complete list of network requests.
 
   The first request in the list is the initial HTML response. All of the subsequent requests for assets like CSS and images happen after this first HTML response kicks things off.
 
@@ -91,7 +91,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 
   ![node/add/article](/source/docs/assets/images/guides/drupal-8-advanced-page-cache/img4-node-1-dev-console.png)
 
-3. That information is also visible on the command line with curl -I.
+3. That information is also visible on the command line with `curl -I`.
 
   ```
   curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/node/1
@@ -130,7 +130,7 @@ Now we are getting to the part where we will actually look at HTTP Headers.
 
   For the rest of the guide, as we make content changes and inspect the changing HTTP headers, we will just reference `curl -I` output because  in Chrome Developer tools has a lot of additional information that would distract from our purpose. But if you are more comfortable in the browser, you can continue using that incognito window.
 
-  For a walk through of how some of these different headers change caching behavior, see https://pantheon.io/docs/guides/frontend-performance/
+  For a walk through of how some of these different headers change caching behavior, see [our Frontend Performance Guide]https://pantheon.io/docs/guides/frontend-performance/
 
   The two headers we care about most are `Surrogate-Key-Raw` and `Age`.
 
@@ -419,3 +419,8 @@ The code we added clears all references to each taxonomy term every time a node 
   curl -I http://dev-$TERMINUS_SITE.pantheonsite.io/taxonomy/term/1
   Age: 0
   ```
+
+  ## Additional Resources.
+
+Where you set and clear tags will vary greatly based on the needs of your site.
+See the [Drupal.org documentation for how you can set cache metadata directly on render arrays](https://www.drupal.org/docs/8/api/render-api/cacheability-of-render-arrays). You can also read this blog post from Aaron Wolfe of Capellic on [Pantheon Advanced Page Cache in Drupal 7](https://capellic.com/2017/11/28/using-pantheon-advanced-page-cache-in-drupal-7/).
